@@ -9,6 +9,10 @@
 #include "log.h"
 #include "tcp.h"
 
+//#define BTlogDebug(x...) logDebug(x)
+#define BTlogDebug(x...) nop()
+
+
 #ifdef BLUETOOTH_NULL
 int initBluetooth(bluetoothtoken_t *bt)
 {
@@ -134,7 +138,7 @@ static int peerWrite(int firstFd, const char *buf, int len)
 			continue;
 		}
 		int r;
-		logDebug("found peer, sending %d bytes, ", len);
+		BTlogDebug("found peer, sending %d bytes, ", len);
 		r = write(s, buf, len);
 		return r;
 	}
@@ -229,7 +233,7 @@ void *bluetoothThreadFunction( void *d ) {
     while(1) {
     	readfds = master;
 		if(select(maxfd+1, &readfds, NULL, NULL, NULL) == -1) {
-		    logError("bt-server select failed");
+		    logError("bt-server select failed, thread dies");
 		    //TODO close all pairs
 		    pthread_exit(NULL);
 		    return NULL;
@@ -280,7 +284,9 @@ void *bluetoothThreadFunction( void *d ) {
 			}
 		}
     }
+    logDebug("bluetooth thread finished");
 	pthread_exit(NULL);
+	return NULL;
 }
 
 static int add_service(sdp_session_t *session, uint32_t *handle, uint8_t rfcomm_channel)
