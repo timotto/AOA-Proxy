@@ -124,6 +124,7 @@ int main(int argc, char** argv) {
 	if (do_fork)
 		do_fork_foo();
 
+	initSigHandler();
 
 	// it is important to init usb after the fork!
 	if (0 > initUsb()) {
@@ -131,29 +132,21 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	if(initAudio(&audio) != 0) {
+	if(initAudio(&audio) == 0) {
+		haveAudio = 1;
+		pthread_create(&audio.thread, NULL, (void*)&audioThreadFunction, (void*)&audio);
+	} else {
 		logError("failed to open audio device - starting without");
 		haveAudio = 0;
-	} else {
-		haveAudio = 1;
 	}
 
-//	if ((bt = initBluetooth(hostname, portno)) != NULL) {
-//		haveBluetooth = 1;
-//	} else {
-//		haveBluetooth = 0;
-//		logError("Failed to initialize bluetooth - starting without");
-//	}
-
-	if(haveAudio) {
-		// do after fork?
-		pthread_create(&audio.thread, NULL, (void*)&audioThreadFunction, (void*)&audio);
-	}
-	if(haveBluetooth) {
+	if ((bt = initBluetooth(hostname, portno)) != NULL) {
+		haveBluetooth = 1;
 		pthread_create(&bt->thread, NULL, (void*)&bluetoothThreadFunction, (void*)bt);
+	} else {
+		haveBluetooth = 0;
+		logError("Failed to initialize bluetooth - starting without");
 	}
-
-	initSigHandler();
 
 	if(autoscan) {
 		struct itimerval timer;
