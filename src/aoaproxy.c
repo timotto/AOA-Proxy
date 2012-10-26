@@ -71,6 +71,7 @@ static int do_fork = 0;
 int main(int argc, char** argv) {
 	int r;
 	int opt;
+	int xcount=0;
 
 	while ((opt = getopt(argc, argv, "dfp:x:")) != -1) {
 	  switch (opt) {
@@ -101,9 +102,14 @@ int main(int argc, char** argv) {
 			if (exclude == NULL) {
 				exclude = e;
 			} else {
-				exclude->next = e;
+				struct t_excludeList *last = exclude;
+				while(last->next != NULL) {
+					last = last->next;
+				}
+				last->next = e;
 			}
-
+			xcount++;
+			printf("added exclude # %d: %04x:%04x\n", xcount, e->vid, e->pid);
 			break;
 		}
 		default: /* '?' */
@@ -114,6 +120,13 @@ int main(int argc, char** argv) {
 	}
 
 	logDebug("using [%s:%d]\n", hostname, portno);
+	logDebug("have %d excluded USB vid/pid pairs:", xcount);
+	struct t_excludeList *e = exclude;
+	int excln=1;
+	while(e != NULL) {
+		logDebug("exclude # %d: %04x:%04x", excln++, e->vid, e->pid);
+		e=e->next;
+	}
 
 	ctx = NULL;
 	connectedDevices = NULL;
@@ -132,7 +145,6 @@ int main(int argc, char** argv) {
 
 //	if ((bt = initBluetooth(hostname, portno)) != NULL) {
 //		haveBluetooth = 1;
-//		pthread_create(&bt->thread, NULL, (void*)&bluetoothThreadFunction, (void*)bt);
 //	} else {
 //		haveBluetooth = 0;
 //		logError("Failed to initialize bluetooth - starting without");
@@ -144,6 +156,9 @@ int main(int argc, char** argv) {
 	if(haveAudio) {
 		// do after fork?
 		pthread_create(&audio.thread, NULL, (void*)&audioThreadFunction, (void*)&audio);
+	}
+	if(haveBluetooth) {
+		pthread_create(&bt->thread, NULL, (void*)&bluetoothThreadFunction, (void*)bt);
 	}
 
 	initSigHandler();
