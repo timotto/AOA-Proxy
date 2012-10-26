@@ -32,9 +32,8 @@ typedef struct {
 	int token;
 	int s;
 	pthread_t thread;
-	pthread_mutex_t mutex;
-	pthread_cond_t condition;
-
+//	pthread_mutex_t mutex;
+//	pthread_cond_t condition;
 } bluetoothtoken_t;
 #endif
 

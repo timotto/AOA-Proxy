@@ -104,8 +104,9 @@ bluetoothtoken_t * initBluetooth(const char *h, const int p)
 
 	bluetoothtoken_t* btp = (bluetoothtoken_t*)malloc(sizeof(bluetoothtoken_t));
 	btp->s = s;
-	pthread_mutex_init(&btp->mutex, NULL);
-	pthread_cond_init(&btp->condition, NULL);
+//not used yet:
+//	pthread_mutex_init(&btp->mutex, NULL);
+//	pthread_cond_init(&btp->condition, NULL);
 
 	return btp;
 }
@@ -119,8 +120,9 @@ int deinitBluetooth(bluetoothtoken_t *bt)
 	sdp_close(sdpSession);
 
     close(bt->s);
-    pthread_mutex_destroy(&bt->mutex);
-    pthread_cond_destroy(&bt->condition);
+//not used yet:
+//    pthread_mutex_destroy(&bt->mutex);
+//    pthread_cond_destroy(&bt->condition);
 	return 0;
 }
 
@@ -205,6 +207,14 @@ static void closePair(int btFd, int tcpFd, fd_set *master)
 		head = head->next;
 	}
 	logDebug("closePair(%d, %d) - not found", btFd, tcpFd);
+	if (btFd != 0) {
+		close(btFd);
+		FD_CLR(btFd, master);
+	}
+	if (tcpFd != 0) {
+		close(tcpFd);
+		FD_CLR(tcpFd, master);
+	}
 }
 
 void *bluetoothThreadFunction( void *d ) {
