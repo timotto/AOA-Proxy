@@ -10,7 +10,7 @@
 #include "tcp.h"
 
 //#define BTlogDebug(x...) logDebug(x)
-#define BTlogDebug(x...) nop()
+#define BTlogDebug(x...)
 
 
 #ifdef BLUETOOTH_NULL
