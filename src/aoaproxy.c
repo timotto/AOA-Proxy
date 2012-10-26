@@ -109,7 +109,6 @@ int main(int argc, char** argv) {
 				last->next = e;
 			}
 			xcount++;
-			printf("added exclude # %d: %04x:%04x\n", xcount, e->vid, e->pid);
 			break;
 		}
 		default: /* '?' */
@@ -119,18 +118,14 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	logDebug("using [%s:%d]\n", hostname, portno);
-	logDebug("have %d excluded USB vid/pid pairs:", xcount);
-	struct t_excludeList *e = exclude;
-	int excln=1;
-	while(e != NULL) {
-		logDebug("exclude # %d: %04x:%04x", excln++, e->vid, e->pid);
-		e=e->next;
-	}
-
 	ctx = NULL;
 	connectedDevices = NULL;
 
+	if (do_fork)
+		do_fork_foo();
+
+
+	// it is important to init usb after the fork!
 	if (0 > initUsb()) {
 		logError("Failed to initialize USB\n");
 		return 1;
@@ -149,9 +144,6 @@ int main(int argc, char** argv) {
 //		haveBluetooth = 0;
 //		logError("Failed to initialize bluetooth - starting without");
 //	}
-
-	if (do_fork)
-		do_fork_foo();
 
 	if(haveAudio) {
 		// do after fork?
