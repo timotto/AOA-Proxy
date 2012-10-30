@@ -124,6 +124,12 @@ int main(int argc, char** argv) {
 	ctx = NULL;
 	connectedDevices = NULL;
 
+	if(initAudio(&audio) == 0) {
+		haveAudio = 1;
+	} else {
+		logError("failed to open audio device - starting without");
+		haveAudio = 0;
+	}
 	if (do_fork)
 		do_fork_foo();
 
@@ -135,12 +141,8 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	if(initAudio(&audio) == 0) {
-		haveAudio = 1;
+	if(haveAudio) {
 		pthread_create(&audio.thread, NULL, (void*)&audioThreadFunction, (void*)&audio);
-	} else {
-		logError("failed to open audio device - starting without");
-		haveAudio = 0;
 	}
 
 	if ((bt = initBluetooth(hostname, portno)) != NULL) {

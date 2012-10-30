@@ -243,7 +243,7 @@ void *bluetoothThreadFunction( void *d ) {
     while(1) {
     	readfds = master;
 		if(select(maxfd+1, &readfds, NULL, NULL, NULL) == -1) {
-		    logError("bt-server select failed, thread dies");
+		    logError("bt-server select failed, bluetooth thread dies");
 		    //TODO close all pairs
 		    pthread_exit(NULL);
 		    return NULL;
