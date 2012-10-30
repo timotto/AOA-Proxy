@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 	int opt;
 	int xcount=0;
 
-	while ((opt = getopt(argc, argv, "dfp:x:")) != -1) {
+	while ((opt = getopt(argc, argv, "dfh:p:x:")) != -1) {
 	  switch (opt) {
 		case 'd':
 			do_fork = 1;
@@ -83,6 +83,9 @@ int main(int argc, char** argv) {
 			break;
 		case 'p':
 			portno = atoi(optarg);
+			break;
+		case 'h':
+			hostname = strdup(optarg);
 			break;
 		case 'x':
 		{
@@ -112,7 +115,7 @@ int main(int argc, char** argv) {
 			break;
 		}
 		default: /* '?' */
-			fprintf(stderr, "Usage: %s [-p port] [-f] [-x vid1:pid1] [-x vidn:pidn]\n",
+			fprintf(stderr, "Usage: %s [-h host] [-p port] [-f] [-x vid1:pid1] [-x vidn:pidn]\n",
 					argv[0]);
 			exit(EXIT_FAILURE);
 		}
