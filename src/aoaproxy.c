@@ -338,7 +338,6 @@ static int connectDevice(libusb_device *device) {
 	entry->usbDevice = device;
 
 #ifdef SOCKET_RETRY
-	int s = connectTcpSocket(hostname, portno);
 	while((r = connectTcpSocket(hostname, portno)) <= 0) {
 		logError("failed to setup socket: %d, retrying\n", r);
 		sleep(SOCKET_RETRY);
