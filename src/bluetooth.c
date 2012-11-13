@@ -155,6 +155,7 @@ static t_sockatPair* addPair(int btfd, int tcpfd) {
 		return NULL;
 	}
 
+	n->next = NULL;
 	n->btFd = btfd;
 	n->tcpFd = tcpfd;
 
@@ -180,11 +181,14 @@ static void closePair(int btFd, int tcpFd, fd_set *master)
 	t_sockatPair *prev = NULL;
 	t_sockatPair *next = NULL;
 
+	logDebug("closePair(%d, %d)...", btFd, tcpFd);
 	while(head != NULL) {
+		logDebug("closePair(%d, %d): checking head->btFt(%d)/head->tcpFd(%d)", btFd, tcpFd, head->btFd, head->tcpFd);
 		if (
 				(btFd == 0 || head->btFd == btFd)
 				&&
 				(tcpFd == 0 || head->tcpFd == tcpFd)) {
+			logDebug("closePair(%d, %d): hit = head->btFt(%d)/head->tcpFd(%d)", btFd, tcpFd, head->btFd, head->tcpFd);
 			next = head->next;
 			if(head->btFd != 0){
 				close(head->btFd);
@@ -260,19 +264,17 @@ void *bluetoothThreadFunction( void *d ) {
 		                }
 
 		                logDebug("new bt connection! tcp...");
-		                int tcpfd = connectTcpSocket(hostname, portno);
-		                if (tcpfd >= 0) {
-		                	FD_SET(tcpfd, &master);
-		                	if (tcpfd > maxfd) {
-		                		maxfd = tcpfd;
-		                	}
-		                	addPair(client, tcpfd);
-		                	logDebug("new bt <-> tcp connection!");
-		                } else {
-		                	logError("tcp socket for bt failed");
-		                	close(i);
-		                	FD_CLR(i, &master);
+		                int tcpfd;
+		                while((tcpfd = connectTcpSocket(hostname, portno))<0) {
+		                	logError("failed to setup tcp socket for bt connection: %d, retrying", tcpfd);
+		                	sleep(1);
 		                }
+	                	FD_SET(tcpfd, &master);
+	                	if (tcpfd > maxfd) {
+	                		maxfd = tcpfd;
+	                	}
+	                	addPair(client, tcpfd);
+	                	logDebug("new bt <-> tcp connection!");
 		            } else {
 		            	logError("bt accept failed");
 		            }

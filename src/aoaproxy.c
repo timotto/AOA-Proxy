@@ -340,7 +340,7 @@ static int connectDevice(libusb_device *device) {
 #ifdef SOCKET_RETRY
 	while((r = connectTcpSocket(hostname, portno)) <= 0) {
 		logError("failed to setup socket: %d, retrying\n", r);
-		sleep(SOCKET_RETRY);
+		sleep(1);
 	}
 	entry->sockfd = r;
 	entry->socketDead = 0;
