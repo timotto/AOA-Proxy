@@ -217,13 +217,13 @@ static void shutdownEverything() {
 
 	if (bt != NULL) {
 		deinitBluetooth(bt);
-		logDebug("waiting for bluetooth thread...\n");
+		logDebug("waiting for bluetooth thread...");
 		if(0 != pthread_join(bt->thread, NULL)) {
-			logError("failed to join bluetooth thread\n");
+			logError("failed to join bluetooth thread");
 		}
 		free(bt);
 	}
-
+	logDebug("shutdown complete");
 }
 
 static void tickleUsbInventoryThread() {

@@ -126,7 +126,7 @@ int playAudio(audioStruct *audio, char *buf, int len)
 		droppedAudioBytes += len;
 		return 0;
 	} else if(droppedAudioBytes != 0) {
-		logDebug("resuming after % bytes dropped from audio", droppedAudioBytes);
+		logDebug("resuming after %d bytes dropped from audio", droppedAudioBytes);
 		droppedAudioBytes = 0;
 	}
 

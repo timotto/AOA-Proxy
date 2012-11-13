@@ -120,6 +120,7 @@ int deinitBluetooth(bluetoothtoken_t *bt)
 	sdp_close(sdpSession);
 
     close(bt->s);
+    pthread_cancel(bt->thread);
 //not used yet:
 //    pthread_mutex_destroy(&bt->mutex);
 //    pthread_cond_destroy(&bt->condition);
@@ -231,6 +232,8 @@ void *bluetoothThreadFunction( void *d ) {
     fd_set master;
     int maxfd, sock_flags, i;
     struct timeval timeout;
+    
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL);
 
 	bluetoothtoken_t *bt = (bluetoothtoken_t*)d;
 
