@@ -17,6 +17,7 @@
 			0xe5, 0xab, 0x00, 0x00,	\
 		}
 
+#define BT_BUFFER_SIZE			16384
 #define RFCOMM_DEFAULT_CHANNEL 10
 
 #ifdef BLUETOOTH_NULL

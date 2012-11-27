@@ -225,7 +225,7 @@ static void closePair(int btFd, int tcpFd, fd_set *master)
 void *bluetoothThreadFunction( void *d ) {
 
     struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
-    char buf[1024] = { 0 };
+    char buf[BT_BUFFER_SIZE] = { 0 };
     int client, bytes_read, status;
     unsigned int opt = sizeof(rem_addr);
     fd_set readfds;
