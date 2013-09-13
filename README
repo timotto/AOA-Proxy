@@ -1,1 +1,26 @@
-Sample readme file for aoaproxy-r1 project.
+AOA Proxy is a general purpose Android Open Accessory Protocol 2.0 implementation supporting both USB and Bluetooth connectivity. It forwards incoming AOA connections to a specified IP:port via TCP (usually something on localhost). You can implement your Android Open Accessory host device and don't have to worry about USB or Bluetooth connectivity. Instead just listen on an ordinary TCP server socket for incoming connections.
+
+The USB transport also supports audio playback. For audio over Bluetooth you need to setup A2DP on your own. 
+
+To compile it you need the GNU autotools. Run the following commands once:
+
+aclocal
+autoconf
+automake --add-missing
+
+Now you can use configure and make to build AOA Proxy.
+
+Depending on what you want AOA Proxy to do you need a few libraries (libusb, bluez, libao). The configure script will tell you more.
+
+There are a few command line parameters:
+
+Usage: ./aoaproxy [-d] [-h host] [-p port] [-f] [-x vid1:pid1] [-x vidn:pidn]
+	-d	starts aoaproxy as a daemon
+	-h host to connect to (default: localhost)
+	-p port to connect to (default: 8721)
+	-f I can't remember what that one did
+	-x USB vid and pid to exclude from AOA attempts
+
+By default aoaproxy attempts an AOA initialization on every USB device connected to the host computer. This probably isn't nice and some USB devices I have exposed some awkward behaviour afterwards.
+
+For details on AOA see http://source.android.com/accessories/aoa2.html
